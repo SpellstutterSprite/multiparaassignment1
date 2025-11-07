@@ -78,6 +78,7 @@ AdjacencyMatrix* createAdjacencyMatrix(int defaultEdgeValue)
  */
 int addEdge(AdjacencyMatrix *pMatrix, int src, int dest, int weight)
 {
+  ///checks all inputs are valid then adds an edge if they are, unsure my validation is optimal here but I couldn't think of a better way to do it
   if (pMatrix == NULL)
   {
     return INVALID_INPUT_PARAMETER;
@@ -120,15 +121,60 @@ int addEdge(AdjacencyMatrix *pMatrix, int src, int dest, int weight)
  */
 int addEdges(AdjacencyMatrix *pMatrix, Edge edges[], int edgeNum)
 { 
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pMatrix;
-    (void)edges;
-    (void)edgeNum;
+  if (pMatrix == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (edges == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (edgeNum <= 0)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  int workingEdges = 0;
+
+  for (int i = 0; i < edgeNum; i++)
+  {
+    int src = edges[i].src;
+    int dest = edges[i].dest;
+    int weight = edges[i].weight;
+
+    if (src < 0 || src >= NUMBER_OF_VERTICES)
+    {
+      continue;;
+    }
+
+    if (dest < 0 || dest >= NUMBER_OF_VERTICES)
+    {
+      continue;
+    }
+
+    if (weight < 0)
+    {
+      continue;
+    }
+
+    pMatrix ->matrix[src][dest] = weight;
+    workingEdges++;
+  }
+
+  if (workingEdges == edgeNum)
+  {
+    return SUCCESS;
+  }
+  else if (workingEdges > 0) 
+  {
+    return PARTIAL_SUCCESS;
+  }
+  else
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 }
 
 /**
