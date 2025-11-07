@@ -30,6 +30,7 @@
  */
 #include <stddef.h>
 #include "adj_matrix.h" // provides the definition of the 'Adjacency Matrix' struct which is required for one of the functions below
+#include "core_definitions.h"
 #include "dijkstra.h"   // provides the definition of structs and functions for the Dijkstra implementation
 
 /** #### FUNCTION IMPLEMENTATIONS ## */
@@ -50,15 +51,70 @@
  */
 int runDijsktraAlgorithm(AdjacencyMatrix *pMatrix, DijkstraTable *pTable, int startNode)
 {
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pMatrix;
-    (void)pTable;
-    (void)startNode;
+  if (pMatrix == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (pTable == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (startNode < 0 || startNode >= NUMBER_OF_VERTICES)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  int current_node = startNode;
+  pTable ->table[current_node].distance = 0;
+  int continueDij = 1;
+
+  while (continueDij)
+  {
+    for (int i = 0; i < NUMBER_OF_VERTICES; i++)
+    {
+      if (pMatrix ->matrix[current_node][i] > 0)
+      {
+        if (pTable ->table[i].visited == false)
+        {
+          int newDistance = pTable ->table[current_node].distance + pMatrix ->matrix[current_node][i];
+
+          if (newDistance < pTable ->table[i].distance)
+          {
+            pTable ->table[i].distance = newDistance;
+            pTable ->table[i].predecessor = current_node;
+          }
+        }
+      }
+    }
+
+    pTable ->table[current_node].visited = true;
+    int next_node = -1;
+    int shortestdist = VERY_LARGE_NUMBER;
+
+    for (int i = 0; i < NUMBER_OF_VERTICES; i++)
+    {
+      if (pTable ->table[i].visited == false)
+      {
+        if (pTable ->table[i].distance < shortestdist)
+        {
+          shortestdist = pTable ->table[i].distance;
+          next_node = i;
+        }
+      }
+    }
+
+    if (next_node == -1)
+    {
+      continueDij = 0;
+    }
+    else
+    {
+      current_node = next_node;
+    }
+  }
+return SUCCESS;
 }
 
 
