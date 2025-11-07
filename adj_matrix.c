@@ -121,6 +121,7 @@ int addEdge(AdjacencyMatrix *pMatrix, int src, int dest, int weight)
  */
 int addEdges(AdjacencyMatrix *pMatrix, Edge edges[], int edgeNum)
 { 
+  /// validates the inputs initially to make sure they exist
   if (pMatrix == NULL)
   {
     return INVALID_INPUT_PARAMETER;
@@ -138,6 +139,7 @@ int addEdges(AdjacencyMatrix *pMatrix, Edge edges[], int edgeNum)
 
   int workingEdges = 0;
 
+  ///validates inputs then either continues the loop on invalid ones or adds the edge on valid ones
   for (int i = 0; i < edgeNum; i++)
   {
     int src = edges[i].src;
@@ -207,14 +209,42 @@ int addEdges(AdjacencyMatrix *pMatrix, Edge edges[], int edgeNum)
  */
 int loadMatrixFromFile(AdjacencyMatrix *pMatrix, char filename[])
 {
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pMatrix;
-    (void)filename;
+  if (pMatrix == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (filename == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  FILE* file = fopen(filename, "r");
+
+  if (file == NULL)
+  {
+    return FILE_IO_ERROR;
+  }
+
+  for (int i = 0; i < NUMBER_OF_VERTICES; i++)
+  {
+    for (int j = 0; j < NUMBER_OF_VERTICES; j++)
+    {
+      int value;
+      int readitems = fscanf(file, "%d", &value);
+      
+      if (readitems != 1)
+      {
+      fclose (file);
+      return FILE_IO_ERROR;
+      }
+
+      pMatrix ->matrix[i][j] = value;
+    }
+  }
+  fclose(file);
+
+  return SUCCESS;
 }
 
 
