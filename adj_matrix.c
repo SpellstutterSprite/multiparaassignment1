@@ -209,6 +209,7 @@ int addEdges(AdjacencyMatrix *pMatrix, Edge edges[], int edgeNum)
  */
 int loadMatrixFromFile(AdjacencyMatrix *pMatrix, char filename[])
 {
+  /// validates inputs then opens adjacency_matrix.txt as read only
   if (pMatrix == NULL)
   {
     return INVALID_INPUT_PARAMETER;
@@ -226,6 +227,7 @@ int loadMatrixFromFile(AdjacencyMatrix *pMatrix, char filename[])
     return FILE_IO_ERROR;
   }
 
+  /// loops through the grid on adjacentcy_matrix.txt and inputs the value into the corresponding spot of pmatrix each itteration
   for (int i = 0; i < NUMBER_OF_VERTICES; i++)
   {
     for (int j = 0; j < NUMBER_OF_VERTICES; j++)
@@ -252,13 +254,75 @@ int loadMatrixFromFile(AdjacencyMatrix *pMatrix, char filename[])
 
 int doDepthFirstTraversal(AdjacencyMatrix *pMatrix, int startingNode, int traversalOutput[])
 { 
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pMatrix;
-    (void)startingNode;
-    (void)traversalOutput;
+  ///validate inputs and set up data structures + their related variables
+  if (pMatrix == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (traversalOutput == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (startingNode <0 || startingNode >= NUMBER_OF_VERTICES)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+  
+  int stack[NUMBER_OF_VERTICES];
+  int outputIndex = 0;
+  int current_node = startingNode;
+  int visited[NUMBER_OF_VERTICES];
+  int stackTop = -1;
+  int continueTraversal = 1;
+  
+  for (int i = 0; i < NUMBER_OF_VERTICES; i++)
+  {
+    visited[i] = 0;
+  }
+
+  visited[current_node] = 1;
+  traversalOutput[outputIndex] = current_node;
+  outputIndex++;
+
+  /// main loop following the method shown in the lectures, checks for unvisited neighbours, pushes the current node to the stack,
+  /// to be able to backtrack, moves to the neighbouring node, marks that as being visited, then restarts. If no neighbouring node
+  /// is found it tries to backtrack, then if backtrack stack is empty finishes the loop.
+  while(continueTraversal)
+  {
+    int unvisitedNeighbour = 0;
+
+    for (int i = 0; i < NUMBER_OF_VERTICES; i++)
+    {
+      if (pMatrix ->matrix[current_node][i] > 0)
+      {
+        if (visited[i] == 0)
+        {
+          stackTop++;
+          stack[stackTop] = current_node;
+          current_node = i;
+          visited[current_node] = 1;
+          traversalOutput[outputIndex] = current_node;
+          outputIndex++;
+          unvisitedNeighbour = 1;
+          break;
+        }
+      }
+    }
+
+    if(!unvisitedNeighbour)
+    {
+      if (stackTop >= 0)
+      {
+        current_node = stack[stackTop];
+        stackTop--;
+      }
+      else
+      {
+        continueTraversal = 0;
+      }
+    }
+  }
+  return SUCCESS;
 }
