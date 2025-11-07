@@ -28,6 +28,7 @@
 /** 
  * ### INCLUDES
  */
+#include "core_definitions.h"
 #include "my_malloc.h"          // gives access to memory allocation functions, including 'myMalloc'
 #include <stdio.h>              // required for access to file input-output functions in C
 #include "adj_matrix.h"         // required, to include the Adjacency Matrix data structures and function declarations
@@ -49,13 +50,15 @@
  */
 AdjacencyMatrix* createAdjacencyMatrix(int defaultEdgeValue)
 {
-  AdjacencyMatrix *pMatrix = (AdjacencyMatrix*)myMalloc(sizeof(AdjacencyMatrix));
+  ///allocates memory then checks for success 
+  AdjacencyMatrix* pMatrix = (AdjacencyMatrix*)myMalloc(sizeof(AdjacencyMatrix));
   
   if (pMatrix == NULL)
   {
     return NULL;
   }
 
+  ///initializes all elements of the matrix 
   for (int i = 0; i < NUMBER_OF_VERTICES; i++)
   {
     for (int j = 0; j < NUMBER_OF_VERTICES; j++)
@@ -75,16 +78,28 @@ AdjacencyMatrix* createAdjacencyMatrix(int defaultEdgeValue)
  */
 int addEdge(AdjacencyMatrix *pMatrix, int src, int dest, int weight)
 {
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pMatrix;
-    (void)src;
-    (void)dest;
-    (void)weight;
+  if (pMatrix == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (src < 0 || src >= NUMBER_OF_VERTICES)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (dest < 0 || dest >= NUMBER_OF_VERTICES)
+  {
+    return  INVALID_INPUT_PARAMETER;
+  }
+  
+  if (weight < 0)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  pMatrix ->matrix[src][dest] = weight;
+  return SUCCESS;
 }
 
 /**
