@@ -51,6 +51,7 @@
  */
 int runDijsktraAlgorithm(AdjacencyMatrix *pMatrix, DijkstraTable *pTable, int startNode)
 {
+  /// validate inputs and set up initial reuired variables/distance set to 0 for starting node
   if (pMatrix == NULL)
   {
     return INVALID_INPUT_PARAMETER;
@@ -70,6 +71,8 @@ int runDijsktraAlgorithm(AdjacencyMatrix *pMatrix, DijkstraTable *pTable, int st
   pTable ->table[current_node].distance = 0;
   int continueDij = 1;
 
+  /// main loop following the process shown in lectures, goes through all edges emenating from current node, determines edges
+  /// checks if they have been visited, calculates cumulative distance then updates distance/predecessor
   while (continueDij)
   {
     for (int i = 0; i < NUMBER_OF_VERTICES; i++)
@@ -89,6 +92,7 @@ int runDijsktraAlgorithm(AdjacencyMatrix *pMatrix, DijkstraTable *pTable, int st
       }
     }
 
+    /// marks current node as visited then gets the next unvisited node and checks for distance again
     pTable ->table[current_node].visited = true;
     int next_node = -1;
     int shortestdist = VERY_LARGE_NUMBER;
@@ -105,6 +109,7 @@ int runDijsktraAlgorithm(AdjacencyMatrix *pMatrix, DijkstraTable *pTable, int st
       }
     }
 
+    ///ends the loop if there are no nodes left to explore or continues the loop and makes the next node the current node
     if (next_node == -1)
     {
       continueDij = 0;
@@ -137,14 +142,41 @@ return SUCCESS;
  */
 int getShortestPathFrom(DijkstraTable *pTable, int nodeFrom, int nodeTo, int pathFound[])
 {
-    // void casts to prevent 'unused variable warning'
-    // remove the following lines of code when you have 
-    // implemented the function yourself
-    (void)pTable;
-    (void)nodeFrom;
-    (void)nodeTo;
-    (void)pathFound;
+  if (pTable == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
 
-    // returning NOT_IMPLEMENTED until your own implementation provided
-    return NOT_IMPLEMENTED;
+  if (pathFound == NULL)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (nodeFrom < 0 || nodeFrom >= NUMBER_OF_VERTICES)
+  { 
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  if (nodeTo < 0 || nodeTo >= NUMBER_OF_VERTICES)
+  {
+    return INVALID_INPUT_PARAMETER;
+  }
+
+  int pathIndex = 0;
+  int current_node = nodeTo;
+  pathFound[pathIndex] = current_node;
+  pathIndex++;
+
+  while (current_node != nodeFrom)
+  {
+    int predecessor = pTable ->table[current_node].predecessor;
+    if (predecessor == -1)
+    {
+      return INVALID_INPUT_PARAMETER;
+    }
+    pathFound[pathIndex] = predecessor;
+    pathIndex++;
+    current_node = predecessor;
+  }
+  return SUCCESS;
 }
